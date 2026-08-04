@@ -19,8 +19,8 @@
         let
           pkgs = import nixpkgs { inherit system; };
           haskellPackages = pkgs.haskell.packages.ghc9103;
-          core = haskellPackages.callCabal2nix "tic-tac-toe-core" ./haskell-core { };
-          cli = haskellPackages.callCabal2nix "tic-tac-toe-cli" ./haskell-cli {
+          core = haskellPackages.callPackage ./haskell-core/nix/generated/tic-tac-toe-core.nix { };
+          cli = haskellPackages.callPackage ./haskell-cli/nix/generated/tic-tac-toe-cli.nix {
             "tic-tac-toe-core" = core;
           };
         in
