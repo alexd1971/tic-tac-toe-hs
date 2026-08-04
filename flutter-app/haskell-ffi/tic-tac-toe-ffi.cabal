@@ -1,0 +1,26 @@
+cabal-version: 3.0
+name: tic-tac-toe-ffi
+version: 0.1.0.0
+license: MIT
+author: Alexey Danilevsky
+build-type: Simple
+
+common warnings
+  ghc-options: -Wall
+  default-extensions:
+      DerivingStrategies
+      ForeignFunctionInterface
+      TemplateHaskell
+
+library
+  import: warnings
+  exposed-modules:
+      TicTacToe.FFI
+  other-modules:
+      TicTacToe.Api
+  hs-source-dirs: src
+  build-depends:
+      base >=4.19 && <4.22
+    , haskell-ffi-th
+    , tic-tac-toe-core
+  default-language: GHC2021

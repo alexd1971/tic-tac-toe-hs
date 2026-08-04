@@ -1,3 +1,5 @@
 packages:
   haskell-core
   haskell-cli
+  flutter-app/haskell-ffi
+  ../haskell-ffi-th
