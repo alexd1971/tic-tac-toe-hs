@@ -1,0 +1,19 @@
+cabal-version: 3.0
+name: tic-tac-toe-cli
+version: 0.1.0.0
+license: MIT
+author: Alexey Danilevsky
+build-type: Simple
+
+common warnings
+  ghc-options: -Wall
+  default-extensions: DerivingStrategies
+
+executable tic-tac-toe
+  import: warnings
+  main-is: Main.hs
+  hs-source-dirs: app
+  build-depends:
+      base >=4.19 && <4.22
+    , tic-tac-toe-core
+  default-language: GHC2021

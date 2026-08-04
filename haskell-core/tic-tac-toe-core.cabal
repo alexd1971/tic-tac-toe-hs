@@ -1,0 +1,35 @@
+cabal-version: 3.0
+name: tic-tac-toe-core
+version: 0.1.0.0
+license: MIT
+author: Alexey Danilevsky
+build-type: Simple
+
+common warnings
+  ghc-options: -Wall
+  default-extensions: DerivingStrategies
+
+library
+  import: warnings
+  exposed-modules:
+      TicTacToe
+      TicTacToe.Board
+      TicTacToe.Game
+      TicTacToe.Game.AI
+      TicTacToe.Game.Difficulty
+      TicTacToe.Game.Error
+      TicTacToe.Game.Player
+      TicTacToe.Mark
+  hs-source-dirs: src
+  build-depends: base >=4.19 && <4.22
+  default-language: GHC2021
+
+test-suite unit
+  import: warnings
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  hs-source-dirs: test
+  build-depends:
+      base >=4.19 && <4.22
+    , tic-tac-toe-core
+  default-language: GHC2021
