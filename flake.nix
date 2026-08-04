@@ -34,6 +34,7 @@
         default = {
           type = "app";
           program = "${self.packages.${system}.tic-tac-toe-cli}/bin/tic-tac-toe";
+          meta.description = "Run the native tic-tac-toe CLI";
         };
       });
 
