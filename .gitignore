@@ -5,3 +5,5 @@ result-*
 *.o
 *.dyn_hi
 *.dyn_o
+.dart_tool/
+.flutter-plugins-dependencies

@@ -5,5 +5,5 @@ mkDerivation {
   src = ../..;
   libraryHaskellDepends = [ base ];
   testHaskellDepends = [ base ];
-  license = lib.licenses.mit;
+  license = lib.meta.getLicenseFromSpdxId "MIT";
 }

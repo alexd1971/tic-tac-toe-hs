@@ -1,0 +1,84 @@
+{
+  "nodes": {
+    "flutter-haskell-bridge": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "th-cross": [
+          "th-cross"
+        ]
+      },
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-u/ZosAeVHbu5nRQSaWI27A4ENRUEab72q5rEEDeOnM4=",
+        "path": "/home/alexey/Projects/flutter-bridges/flutter-haskell-bridge",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/alexey/Projects/flutter-bridges/flutter-haskell-bridge",
+        "type": "path"
+      }
+    },
+    "haskell-ffi-th": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785962123,
+        "narHash": "sha256-E+nChKWT0Jr2s83sUmfRMH/D/rbBopdgM7Wh+lg1Xkw=",
+        "path": "/home/alexey/Projects/flutter-bridges/haskell-ffi-th",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/alexey/Projects/flutter-bridges/haskell-ffi-th",
+        "type": "path"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1785828668,
+        "narHash": "sha256-8fsyqeO+mJqvIzeO4xIpgJe/f7MTbbVTEC6RT6WSXNs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e72e4f299401a3689d4b3d5fc6496b11db7064eb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flutter-haskell-bridge": "flutter-haskell-bridge",
+        "haskell-ffi-th": "haskell-ffi-th",
+        "nixpkgs": "nixpkgs",
+        "th-cross": "th-cross"
+      }
+    },
+    "th-cross": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-xTdhveC0qHt1mUWMKptxyqgZRCXF8yY4gKRd9WnMgQE=",
+        "path": "/home/alexey/Projects/flutter-bridges/th-cross",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/alexey/Projects/flutter-bridges/th-cross",
+        "type": "path"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

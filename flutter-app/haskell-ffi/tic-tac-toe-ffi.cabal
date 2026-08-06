@@ -19,6 +19,7 @@ library
   other-modules:
       TicTacToe.Api
   hs-source-dirs: src
+  c-sources: cbits/haskell_runtime.c
   build-depends:
       base >=4.19 && <4.22
     , haskell-ffi-th
