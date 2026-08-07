@@ -28,8 +28,11 @@
       importNixpkgs = system:
         import nixpkgs {
           inherit system;
-          # Android SDK/NDK derivations include unfree archives.
-          config.allowUnfree = true;
+          config = {
+            # Android SDK/NDK derivations include unfree archives.
+            allowUnfree = true;
+            android_sdk.accept_license = true;
+          };
         };
     in
     {
@@ -127,12 +130,15 @@
       devShells = forEachSystem (system:
         let
           pkgs = importNixpkgs system;
-          tools = import (flutter-haskell-bridge + /nix/tools.nix) { inherit pkgs; };
+          tools = flutter-haskell-bridge.lib.${system}.tools;
+          flutterSdk = tools.flutterSdk;
+          androidSdk = tools.androidSdk;
         in
         {
           default = pkgs.mkShell {
             packages = [
-              pkgs.android-tools
+              flutterSdk.flutter
+              flutterSdk.flutterSdkPath
               pkgs.cabal-install
               pkgs.cabal2nix
               pkgs.jdk17
@@ -140,15 +146,32 @@
             ];
 
             shellHook = ''
-              cat <<'EOF'
-Tic-tac-toe Flutter/Haskell shell
+              # Materialise the writable Flutter SDK farm.
+              flutter_sdk_path="$(${flutterSdk.flutterSdkPath}/bin/flutter-sdk-path)"
 
-Common commands:
-  nix run .#regen-haskell-nix
-  nix run .#sync-haskell-artifacts
+              export ANDROID_HOME="${androidSdk.sdkRoot}"
+              export ANDROID_SDK_ROOT="${androidSdk.sdkRoot}"
 
-Android SDK/device configuration is still owned by Flutter/Android tooling.
-EOF
+              cat > app/android/local.properties <<EOF
+              sdk.dir=${androidSdk.sdkRoot}
+              flutter.sdk=$flutter_sdk_path
+              flutter.buildMode=debug
+              flutter.versionName=1.0.0
+              flutter.versionCode=1
+              EOF
+
+              cat <<EOF
+              Tic-tac-toe Flutter/Haskell shell
+
+              Common commands:
+                nix run .#regen-haskell-nix
+                nix run .#sync-haskell-artifacts
+                flutter pub get
+                flutter run
+
+              Flutter SDK:  $flutter_sdk_path
+              Android SDK:  ${androidSdk.sdkRoot}
+              EOF
             '';
           };
         });

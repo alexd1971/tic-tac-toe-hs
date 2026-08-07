@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Nix-managed Flutter and Android SDKs
+
+The Flutter dev shell now provides both Flutter and Android SDKs from Nix.
+No manual Flutter checkout or Android SDK installation is required — `nix
+develop` materialises a writable symlink farm for the Flutter SDK (used
+directly, read-only, for the Android SDK) and writes
+`app/android/local.properties` automatically. See
+`flutter-haskell-bridge/docs/nix-managed-sdks.md` for details.
+
 ### Flutter app
 
 Added the Flutter UI layer under `flutter-app/app/` (Android only):
