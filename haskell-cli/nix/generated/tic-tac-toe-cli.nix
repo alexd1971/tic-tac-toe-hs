@@ -6,5 +6,5 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [ base tic-tac-toe-core ];
-  license = lib.licenses.mit;
+  license = lib.meta.getLicenseFromSpdxId "BSD-3-Clause";
 }

@@ -1,7 +1,7 @@
 cabal-version: 3.0
 name: tic-tac-toe-cli
 version: 0.1.0.0
-license: MIT
+license: BSD-3-Clause
 author: Alexey Danilevsky
 build-type: Simple
 
