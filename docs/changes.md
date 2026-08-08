@@ -8,25 +8,64 @@ The Flutter dev shell now provides both Flutter and Android SDKs from Nix.
 No manual Flutter checkout or Android SDK installation is required — `nix
 develop` materialises a writable symlink farm for the Flutter SDK (used
 directly, read-only, for the Android SDK) and writes
-`app/android/local.properties` automatically. See
+`flutter-gui/flutter-app/android/local.properties` automatically. See
 `flutter-haskell-bridge/docs/nix-managed-sdks.md` for details.
 
-### Flutter app
+### Flutter GUI example
 
-Added the Flutter UI layer under `flutter-app/app/` (Android only):
+Added the Flutter UI layer under `flutter-gui/flutter-app/`:
 
-- Scaffolded with `flutter create --platforms android`. Path dependency on the
-  sibling `bridge/` package.
-- High-level Dart wrapper `app/lib/tic_tac_toe_game.dart` over the generated
-  `HaskellApi`: typed `Mark`, `Difficulty`, `BoardState`, and `GameError`
+- Scaffolded for Android and Linux desktop. Path dependency on the sibling
+  `flutter-haskell-bridge/` package.
+- High-level Dart wrapper `flutter-gui/flutter-app/lib/tic_tac_toe_game.dart`
+  over the generated `HaskellApi`: typed `Mark`, `Difficulty`, `BoardState`, and `GameError`
   enums, `TicTacToeGame` owning the `StablePtr` handle with `dispose()`.
 - Setup screen (difficulty + side selection) and game screen (3x3 board, AI
   moves, win/draw detection with winning-line highlight, in-place restart).
 - Smoke widget test for the setup screen.
 
+### Flutter/Haskell layout
+
+Renamed and aligned the Flutter/Haskell integration directories with the
+`flutter-haskell-bridge` template:
+
+- top-level Flutter integration directory: `flutter-app/` -> `flutter-gui/`;
+- Flutter application package: `flutter-gui/flutter-app/`;
+- Flutter FFI plugin package: `flutter-gui/flutter-haskell-bridge/`;
+- Haskell FFI package: `flutter-gui/haskell-ffi/`;
+- app-specific Haskell package wiring: `flutter-gui/haskell-packages.nix`.
+
+The bridge input now comes from GitHub:
+`github:alexd1971/flutter-haskell-bridge`.
+
+### Android and native artifact bundling
+
+The Flutter/Haskell flake now builds both Android and native desktop artifacts.
+Use `bundle-libs` from `flutter-gui/`:
+
+```bash
+nix run .#bundle-libs -- all
+nix run .#bundle-libs -- android
+nix run .#bundle-libs -- native
+```
+
+The Dart API is generated once because Android and native builds export the
+same FFI symbols.
+
+### Binary cache
+
+The first Flutter/Haskell build may otherwise spend a long time building GHC
+toolchains used by `th-cross`. The README now recommends enabling the Cachix
+cache before building:
+
+```bash
+cachix use alambdan
+```
+
 ### Bridge wrapper relocation
 
-Moved the high-level Dart wrapper from `bridge/lib/` to `app/lib/`. The bridge
+Moved the high-level Dart wrapper from `flutter-haskell-bridge/lib/` to
+`flutter-gui/flutter-app/lib/`. The bridge
 package is now a pure FFI projection of the generated manifest
 (`tic_tac_toe_api.dart` + barrel) and is safe to regenerate without losing
 domain logic.

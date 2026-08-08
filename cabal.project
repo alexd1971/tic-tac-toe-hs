@@ -1,5 +1,9 @@
 packages:
   haskell-core
   haskell-cli
-  flutter-app/haskell-ffi
-  ../haskell-ffi-th
+  flutter-gui/haskell-ffi
+
+source-repository-package
+  type: git
+  location: https://github.com/alexd1971/haskell-ffi-th.git
+  tag: de6b0466c9a9395e855159aca8cce423c5320ba8

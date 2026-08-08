@@ -1,0 +1,93 @@
+{
+  "nodes": {
+    "flutter-haskell-bridge": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "th-cross": [
+          "th-cross"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786203279,
+        "narHash": "sha256-hcQs7GLewi9SdxBqlCPBn4lbZBe+eACDJzTRbLFyGS8=",
+        "owner": "alexd1971",
+        "repo": "flutter-haskell-bridge",
+        "rev": "7a3ba554b582c218c4b72d97ac0631afd5b145bd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alexd1971",
+        "repo": "flutter-haskell-bridge",
+        "type": "github"
+      }
+    },
+    "haskell-ffi-th": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786132922,
+        "narHash": "sha256-N30HPoKBY10eCSBjV3mh+hMpvQILOI+iLclysGuhLwg=",
+        "owner": "alexd1971",
+        "repo": "haskell-ffi-th",
+        "rev": "de6b0466c9a9395e855159aca8cce423c5320ba8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alexd1971",
+        "repo": "haskell-ffi-th",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1785828668,
+        "narHash": "sha256-8fsyqeO+mJqvIzeO4xIpgJe/f7MTbbVTEC6RT6WSXNs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e72e4f299401a3689d4b3d5fc6496b11db7064eb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flutter-haskell-bridge": "flutter-haskell-bridge",
+        "haskell-ffi-th": "haskell-ffi-th",
+        "nixpkgs": "nixpkgs",
+        "th-cross": "th-cross"
+      }
+    },
+    "th-cross": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786127037,
+        "narHash": "sha256-Ozwfsojwsj5Y0nPxBYR+vACWo0TuUYustZ1mo2poES8=",
+        "owner": "alexd1971",
+        "repo": "template-haskell-cross",
+        "rev": "76a84d11b52d1c6dfaa059eecf0e2bd5a66abdfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alexd1971",
+        "repo": "template-haskell-cross",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
