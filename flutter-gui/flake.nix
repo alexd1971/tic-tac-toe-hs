@@ -52,6 +52,7 @@
           androidTarget = target;
           ffiLibraryName = "tic_tac_toe";
           flutterPackageDir = "flutter-haskell-bridge";
+          nativeLinkMode = "static-haskell";
           packageFile = ./haskell-ffi/nix/generated/tic-tac-toe-ffi.nix;
           dartApiFile = "tic_tac_toe_api.dart";
         };
