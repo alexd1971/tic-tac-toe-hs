@@ -10,11 +10,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786276574,
-        "narHash": "sha256-iDq3h6uhJEKNKS4uoi3F1/MgJ/v9lFQ6S/1mqQ87LNg=",
+        "lastModified": 1786307672,
+        "narHash": "sha256-WouHZvRfsOnm3bcJbTibyi81iSY50QWyU9T0zWHsSTc=",
         "owner": "alexd1971",
         "repo": "flutter-haskell-bridge",
-        "rev": "0a8e56ffe34659f36caf3ebaab8321e94352bbfd",
+        "rev": "0c63d90875caa5a122f8acfe68fb923a2a6c359b",
         "type": "github"
       },
       "original": {
