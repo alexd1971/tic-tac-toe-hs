@@ -2,14 +2,11 @@
   description = "Flutter integration for the Haskell tic-tac-toe core";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    th-cross.url = "github:alexd1971/template-haskell-cross";
-    th-cross.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.follows = "flutter-haskell-bridge/nixpkgs";
+    th-cross.follows = "flutter-haskell-bridge/th-cross";
     haskell-ffi-th.url = "github:alexd1971/haskell-ffi-th";
     haskell-ffi-th.inputs.nixpkgs.follows = "nixpkgs";
     flutter-haskell-bridge.url = "github:alexd1971/flutter-haskell-bridge";
-    flutter-haskell-bridge.inputs.nixpkgs.follows = "nixpkgs";
-    flutter-haskell-bridge.inputs.th-cross.follows = "th-cross";
   };
 
   outputs = { self, nixpkgs, th-cross, haskell-ffi-th, flutter-haskell-bridge, ... }:
@@ -24,6 +21,8 @@
       ghcVersion = "9.10.3";
       target = "aarch64-android";
       androidAbi = "arm64-v8a";
+      androidLinkMode = "static-haskell";
+      nativeLinkMode = "static-haskell";
 
       importNixpkgs = system:
         import nixpkgs {
@@ -38,22 +37,41 @@
         let
           pkgs = importNixpkgs system;
           haskellPackages = import ./haskell-packages.nix;
-          bridge = import (flutter-haskell-bridge + /nix/bridge-lib.nix) {
-            inherit pkgs th-cross system;
-          };
-          tools = import (flutter-haskell-bridge + /nix/tools.nix) { inherit pkgs; };
-        in
-        import (flutter-haskell-bridge + /nix/flutter-artifacts.nix) {
-          inherit pkgs ghcVersion androidAbi;
-          inherit (haskellPackages) localHaskellPackages regeneratePackages;
-          haskellFfiTh = haskell-ffi-th;
-          bridgeLib = bridge;
-          dartFfiGenerator = tools.dartFfiGenerator;
-          androidTarget = target;
+          manifestFile = "ffi-manifest.json";
           ffiLibraryName = "tic_tac_toe";
           flutterPackageDir = "flutter-haskell-bridge";
-          nativeLinkMode = "static-haskell";
-          packageFile = ./haskell-ffi/nix/generated/tic-tac-toe-ffi.nix;
+          ffiPackageFile = ./haskell-ffi/nix/generated/tic-tac-toe-ffi.nix;
+          localPackages =
+            {
+              haskell-ffi-th = {
+                packageFile = haskell-ffi-th + /nix/generated/haskell-ffi-th.nix;
+              };
+            }
+            // haskellPackages.localHaskellPackages;
+          androidBuilder =
+            import (flutter-haskell-bridge + /nix/flutter-android-builder.nix) {
+              bridgeLib = flutter-haskell-bridge.lib.${system};
+              inherit ghcVersion ffiPackageFile manifestFile localPackages;
+              name = ffiLibraryName;
+              inherit target;
+              abi = androidAbi;
+              linkMode = androidLinkMode;
+            };
+          nativeBuilder =
+            import (flutter-haskell-bridge + /nix/flutter-native-builder.nix) {
+              inherit pkgs;
+              bridgeLib = flutter-haskell-bridge.lib.${system};
+              inherit ghcVersion ffiPackageFile manifestFile localPackages flutterPackageDir;
+              name = ffiLibraryName;
+              linkMode = nativeLinkMode;
+            };
+        in
+        import (flutter-haskell-bridge + /nix/flutter-artifacts.nix) {
+          inherit pkgs androidBuilder nativeBuilder;
+          inherit (haskellPackages) localHaskellPackages;
+          dartFfiGenerator = flutter-haskell-bridge.packages.${system}.dart-ffi-generator;
+          inherit ffiLibraryName flutterPackageDir manifestFile ffiPackageFile;
+          packagesToRegenerate = haskellPackages.regeneratePackages;
           dartApiFile = "tic_tac_toe_api.dart";
         };
     in
