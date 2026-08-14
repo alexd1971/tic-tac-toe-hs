@@ -1,0 +1,42 @@
+cabal-version: 3.0
+name: tic-tac-toe-server
+version: 0.1.0.0
+synopsis: HTTP API server for the Haskell tic-tac-toe core
+license: BSD-3-Clause
+author: Alexey Danilevsky
+build-type: Simple
+
+common warnings
+  ghc-options: -Wall
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      DerivingStrategies
+      DuplicateRecordFields
+      OverloadedStrings
+      TypeOperators
+
+executable tic-tac-toe-server
+  import: warnings
+  main-is: Main.hs
+  other-modules:
+      Server
+      Server.Types
+  hs-source-dirs: app
+  build-depends:
+      aeson
+    , base >=4.19 && <4.22
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , http-media
+    , servant
+    , servant-server
+    , stm
+    , tic-tac-toe-core
+    , wai
+    , wai-app-static
+    , wai-cors
+    , warp
+  default-language: GHC2021

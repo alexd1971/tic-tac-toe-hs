@@ -4,15 +4,21 @@ This repository is a working example of using
 [`flutter-haskell-bridge`](https://github.com/alexd1971/flutter-haskell-bridge)
 to call a Haskell library from a Flutter application.
 
-The example keeps the game logic in Haskell, exposes it through a small FFI
-package, bundles the resulting native libraries into a Flutter plugin, and uses
-that plugin from a Flutter UI. The same Haskell core is also used by a native
-CLI, so the domain logic can be built and tested without Flutter or Android.
+The example keeps the game logic in Haskell and exposes it to Flutter in two
+ways:
+
+- native desktop and Android use `flutter-haskell-bridge` and a generated FFI
+  API;
+- Flutter web uses an HTTP API served by a Haskell `servant` server.
+
+The same Haskell core is also used by a native CLI, so the domain logic can be
+built and tested without Flutter, Android, or a browser.
 
 ## Directory layout
 
 - `haskell-core`: pure tic-tac-toe domain logic and AI.
 - `haskell-cli`: native console application using `haskell-core`.
+- `haskell-server`: HTTP API server using `servant` and `warp`.
 - `flutter-gui`: Flutter/Haskell integration layer.
   - `flutter-app`: the end-user Flutter application.
   - `flutter-haskell-bridge`: local Flutter plugin package that contains the
@@ -24,7 +30,8 @@ CLI, so the domain logic can be built and tested without Flutter or Android.
 The Flutter layer is intentionally separate from the core library. In a real
 application, the Haskell library does not have to live inside the Flutter
 project; it can be a sibling directory, a separate repository, or another Nix
-input.
+input. The web server follows the same rule: it is just another consumer of the
+core library.
 
 ## Requirements
 
@@ -39,34 +46,36 @@ need a separately installed Android SDK for the commands below.
 
 The Android example currently targets `aarch64-android` / `arm64-v8a`.
 
-## Build time and binary cache
+For Flutter web, use a browser supported by your Flutter SDK. In release mode,
+the Haskell server can serve both the static Flutter web bundle and the HTTP API:
+static files are served from `/`, and the game API is served under `/api`.
 
-The first Flutter/Haskell build can take a long time. The cross-compilation
-stack uses several large GHC/toolchain outputs: a patched host compiler for the
-Template Haskell worker, a target cross-GHC for Android, and the native GHC used
-for desktop artifacts. If they are not available from a binary substituter, Nix
-has to build them locally.
+By default the web UI uses the same origin `/api/` endpoint. When running
+Flutter web from the Flutter development server while the Haskell API server is
+running separately, override the API URL:
 
-For regular use, publishing those toolchains and build artifacts to a binary
-cache such as Cachix is recommended. Configure the cache before running
-`bundle-libs`; otherwise the first build may spend most of its time compiling
-the toolchain instead of the example application.
+```bash
+--dart-define=API_BASE_URL=http://host:port/api/
+```
 
-The cache is not enabled automatically by this flake. If you want to use the
-binary cache for this example, enable it explicitly before building:
+## Binary cache
+
+The first build may be slow because Nix has to fetch or build the Haskell,
+Flutter, Android, and cross-compilation toolchains. Use the project Cachix cache
+before running `bundle-libs` or release builds:
 
 ```bash
 cachix use alambdan
 ```
 
-## Build workflow
+## Usage workflow
 
 There are two flakes:
 
-- the repository root flake builds the native Haskell CLI;
+- the repository root flake builds the native Haskell CLI and HTTP server;
 - `flutter-gui/flake.nix` builds and bundles Flutter/Haskell artifacts.
 
-### 1. Build and test the Haskell core
+### Shared Haskell checks
 
 From the repository root:
 
@@ -77,7 +86,7 @@ nix run
 
 `nix run` starts the native `tic-tac-toe` CLI.
 
-### 2. Enter the Flutter/Haskell shell
+### Native and Android development
 
 ```bash
 cd flutter-gui
@@ -87,10 +96,8 @@ nix develop
 The shell sets `ANDROID_HOME` and `ANDROID_SDK_ROOT`, and writes
 `flutter-app/android/local.properties` for Gradle.
 
-### 3. Regenerate Haskell package Nix files when Cabal files change
-
-Run this only after changing Haskell package metadata, dependencies, or source
-layout:
+Regenerate Haskell package Nix files only after changing Haskell package
+metadata, dependencies, or source layout:
 
 ```bash
 nix run .#regen-haskell-nix
@@ -98,9 +105,7 @@ nix run .#regen-haskell-nix
 
 This regenerates the Nix expressions listed in `haskell-packages.nix`.
 
-### 4. Build and bundle FFI artifacts
-
-To build both Android and native desktop artifacts:
+Build and bundle FFI artifacts for native desktop and Android:
 
 ```bash
 nix run .#bundle-libs -- all
@@ -118,12 +123,12 @@ The command updates the Flutter plugin package under
 
 - `android/src/main/jniLibs/arm64-v8a`: Android JNI libraries;
 - `linux/lib`: Linux shared libraries;
-- `lib/tic_tac_toe_api.dart`: generated Dart FFI bindings.
+- `lib/bridge.dart`: generated Dart FFI bindings.
 
 The Dart API is generated once because Android and native builds export the
 same FFI symbols.
 
-### 5. Fetch Flutter dependencies
+Fetch Flutter dependencies:
 
 ```bash
 cd flutter-app
@@ -133,18 +138,18 @@ flutter pub get
 The app depends on the local plugin package:
 
 ```yaml
-flutter_haskell_bridge:
+tic_tac_toe_bridge:
   path: ../flutter-haskell-bridge
 ```
 
-### 6. Run checks
+Run checks:
 
 ```bash
 flutter analyze
 flutter test
 ```
 
-### 7. Build or run Linux desktop
+Build or run Linux desktop:
 
 ```bash
 flutter build linux --debug
@@ -160,38 +165,117 @@ flutter pub get
 flutter build linux --debug
 ```
 
-### 8. Build or run Android
-
-List devices:
+Build or run Android:
 
 ```bash
 flutter devices
-```
-
-Build a debug APK:
-
-```bash
 flutter build apk --debug
-```
-
-Run on a connected Android device or emulator:
-
-```bash
 flutter run -d <device-id>
 ```
 
-## Important files
+### Flutter web development
 
-- `flutter-gui/flake.nix`: connects this application to
-  `flutter-haskell-bridge`, `template-haskell-cross`, and `haskell-ffi-th`.
-- `flutter-gui/haskell-packages.nix`: declares local Haskell packages and the
-  package files that can be regenerated with `regen-haskell-nix`.
-- `flutter-gui/haskell-ffi/src/TicTacToe/FFI.hs`: exported Haskell FFI surface.
-- `flutter-gui/flutter-haskell-bridge/lib/tic_tac_toe_bridge.dart`: barrel
-  export for the generated FFI API.
-- `flutter-gui/flutter-app/lib/tic_tac_toe_game.dart`: high-level Dart wrapper
-  around the generated API.
-- `flutter-gui/flutter-app/lib/game`: Flutter UI.
+During development, run the Haskell HTTP API server and Flutter's web dev
+server separately.
+
+In the first shell, from the repository root:
+
+```bash
+nix run .#server
+```
+
+The server listens on `http://127.0.0.1:8081`, serves API routes under `/api`,
+and may also serve static files when `STATIC_DIR` is set.
+
+In the second shell:
+
+```bash
+cd flutter-gui/flutter-app
+flutter run -d chrome \
+  --dart-define=API_BASE_URL=http://127.0.0.1:8081/api/
+```
+
+If the API server runs on another port, adjust the Dart define:
+
+```bash
+flutter run -d chrome \
+  --dart-define=API_BASE_URL=http://127.0.0.1:8090/api/
+```
+
+### Web release without a container
+
+Build the static Flutter web bundle with Nix:
+
+```bash
+nix build .#web
+```
+
+Run the Haskell server against that bundle:
+
+```bash
+STATIC_DIR="$PWD/result" nix run .#server
+```
+
+The server serves:
+
+- `GET /`: Flutter web application;
+- `GET/POST/DELETE /api/...`: game API used by the web application.
+
+Use `PORT` to override the default `8081`:
+
+```bash
+PORT=8090 STATIC_DIR="$PWD/result" nix run .#server
+```
+
+### Web release as an image
+
+The `web-app-image` output packages:
+
+- builds the Flutter web bundle with Nix;
+- packages the `tic-tac-toe-server` executable and its runtime closure;
+- packages the generated Flutter static files under `/app/static`.
+
+You can build the web bundle separately:
+
+```bash
+nix build .#web
+```
+
+Or build the final Docker-compatible OCI image directly:
+
+```bash
+nix build .#web-app-image
+```
+
+The image build does not compile anything inside the container; Flutter web and
+the Haskell server are built by Nix before the image is assembled.
+
+Load and run with Docker-compatible tooling:
+
+```bash
+docker load < result
+docker run --rm -p 8081:8081 tic-tac-toe-hs:latest
+```
+
+The image sets:
+
+```text
+PORT=8081
+STATIC_DIR=/app/static
+```
+
+## Entry points
+
+- Root flake:
+  - `nix run`: run the CLI.
+  - `nix run .#server`: run the HTTP/web server.
+  - `nix build .#web`: build Flutter web static files.
+  - `nix build .#web-app-image`: build the Docker-compatible web image.
+- `flutter-gui` flake:
+  - `nix develop`: enter the Flutter/Haskell development shell.
+  - `nix run .#bundle-libs -- all`: build and copy native/Android FFI
+    artifacts into the Flutter plugin.
+  - `nix run .#regen-haskell-nix`: regenerate app-specific Cabal-to-Nix files.
 
 ## External dependencies
 

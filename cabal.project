@@ -1,6 +1,7 @@
 packages:
   haskell-core
   haskell-cli
+  haskell-server
   flutter-gui/haskell-ffi
 
 source-repository-package

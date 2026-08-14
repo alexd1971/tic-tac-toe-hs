@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../tic_tac_toe_game.dart';
 
-import 'game_screen.dart';
+import '../game.dart';
+import 'game.dart';
 
 class SetupScreen extends StatefulWidget {
   const SetupScreen({super.key});

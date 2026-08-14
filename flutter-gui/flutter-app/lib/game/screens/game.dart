@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../tic_tac_toe_game.dart';
 
-import 'board_widget.dart';
+import '../game.dart';
+import '../widgets/board.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -21,7 +21,9 @@ class _GameScreenState extends State<GameScreen> {
   late TicTacToeGame _game;
   late List<Mark?> _board;
   bool _aiThinking = false;
+  bool _humanMovePending = false;
   String? _error;
+  String? _startupError;
   bool _initialized = false;
 
   @override
@@ -38,21 +40,57 @@ class _GameScreenState extends State<GameScreen> {
     super.dispose();
   }
 
-  void _startNewGame() {
-    if (_initialized) {
-      _game.dispose();
+  Future<void> _startNewGame() async {
+    final previousGame = _initialized ? _game : null;
+    setState(() {
+      _startupError = null;
+      _humanMovePending = false;
+    });
+
+    late final TicTacToeGame game;
+    try {
+      game = await TicTacToeGame.create(humanMark: widget.humanMark);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _startupError = error.toString();
+        _error = _initialized ? 'Failed to start game: $error' : _error;
+        _aiThinking = false;
+        _humanMovePending = false;
+      });
+      return;
     }
-    final game = TicTacToeGame(humanMark: widget.humanMark);
+
+    await previousGame?.dispose();
+
+    if (!mounted) {
+      await game.dispose();
+      return;
+    }
+
     final board = game.board();
     final aiStarts = game.currentPlayer != widget.humanMark;
 
-    setState(() {
-      _game = game;
-      _board = board;
-      _error = null;
-      _aiThinking = aiStarts;
-      _initialized = true;
-    });
+    if (_initialized) {
+      setState(() {
+        _game = game;
+        _board = board;
+        _error = null;
+        _startupError = null;
+        _aiThinking = aiStarts;
+        _humanMovePending = false;
+      });
+    } else {
+      setState(() {
+        _game = game;
+        _board = board;
+        _error = null;
+        _startupError = null;
+        _aiThinking = aiStarts;
+        _humanMovePending = false;
+        _initialized = true;
+      });
+    }
 
     if (aiStarts) {
       _scheduleAiMove();
@@ -61,6 +99,7 @@ class _GameScreenState extends State<GameScreen> {
 
   bool get _isHumanTurn =>
       !_aiThinking &&
+      !_humanMovePending &&
       _game.state == BoardState.inProgress &&
       _game.currentPlayer == widget.humanMark;
 
@@ -69,9 +108,9 @@ class _GameScreenState extends State<GameScreen> {
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted || !identical(game, _game)) return;
 
-    final move = game.bestMove(widget.difficulty);
+    final move = await game.bestMove(widget.difficulty);
     if (move != null) {
-      game.makeMove(move);
+      await game.makeMove(move);
     }
     if (!identical(game, _game)) return;
 
@@ -81,22 +120,29 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  void _onCellTap(int index) {
+  Future<void> _onCellTap(int index) async {
     if (!_isHumanTurn) return;
 
-    final error = _game.makeMove(index);
+    final game = _game;
+    setState(() => _humanMovePending = true);
+    final error = await game.makeMove(index);
+    if (!mounted || !identical(game, _game)) return;
     if (error != null) {
-      setState(() => _error = error.description);
+      setState(() {
+        _error = error.description;
+        _humanMovePending = false;
+      });
       return;
     }
 
     final shouldScheduleAi =
-        _game.state == BoardState.inProgress &&
-        _game.currentPlayer != widget.humanMark;
+        game.state == BoardState.inProgress &&
+        game.currentPlayer != widget.humanMark;
 
     setState(() {
-      _board = _game.board();
+      _board = game.board();
       _error = null;
+      _humanMovePending = false;
       if (shouldScheduleAi) _aiThinking = true;
     });
 
@@ -108,6 +154,36 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (!_initialized) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Tic-Tac-Toe'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Retry',
+              onPressed: _startNewGame,
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Center(
+            child: _startupError == null
+                ? const CircularProgressIndicator()
+                : Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      'Failed to start game:\n$_startupError',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  ),
+          ),
+        ),
+      );
+    }
+
     final state = _game.state;
 
     return Scaffold(

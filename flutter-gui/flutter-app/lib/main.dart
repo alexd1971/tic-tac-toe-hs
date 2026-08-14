@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'game/setup_screen.dart';
+import 'game/screens/setup.dart';
 
 void main() {
   runApp(const TicTacToeApp());

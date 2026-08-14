@@ -72,7 +72,7 @@
           dartFfiGenerator = flutter-haskell-bridge.packages.${system}.dart-ffi-generator;
           inherit ffiLibraryName flutterPackageDir manifestFile ffiPackageFile;
           packagesToRegenerate = haskellPackages.regeneratePackages;
-          dartApiFile = "tic_tac_toe_api.dart";
+          dartApiFile = "bridge.dart";
         };
     in
     {

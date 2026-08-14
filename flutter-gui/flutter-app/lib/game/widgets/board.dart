@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../tic_tac_toe_game.dart';
+
+import '../game.dart';
 
 class BoardWidget extends StatelessWidget {
   const BoardWidget({
