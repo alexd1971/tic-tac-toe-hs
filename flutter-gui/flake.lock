@@ -6,11 +6,11 @@
         "th-cross": "th-cross"
       },
       "locked": {
-        "lastModified": 1786390294,
-        "narHash": "sha256-2BCv26UKkhshjae/8HQy22Ae0KS1r/ECITxpG/PTCP0=",
+        "lastModified": 1786696739,
+        "narHash": "sha256-PvmFFVVbyY41ixHT3QhBvy9RooUiGYik9CS+Y+OZlS0=",
         "owner": "alexd1971",
         "repo": "flutter-haskell-bridge",
-        "rev": "cf0962f804723dfce087eb2798602ac837f27c56",
+        "rev": "f56a4cc6b12e3fded970a444ffc1d83116940a4f",
         "type": "github"
       },
       "original": {
@@ -41,11 +41,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1786106723,
-        "narHash": "sha256-zDSUbpoeo/9ZmD2+wXnzxoo1+uhL8vxc0b8yuYMKYq0=",
+        "lastModified": 1785571196,
+        "narHash": "sha256-KoTsyMQqnXQZq8deCEnu4QkyldkwH/bpMMhUcfMdGIw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f13ff45afd1bb73e640eaa08a7066dbed07e3238",
+        "rev": "148bab9c1c3c53136ecb44a6ea356a0ed5b39b06",
         "type": "github"
       },
       "original": {
@@ -90,11 +90,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1786362085,
-        "narHash": "sha256-xpvN/vJHYXsNnitfkP60EPI4r8IOUjrBCzEwg3oC8zY=",
+        "lastModified": 1786559404,
+        "narHash": "sha256-PfVwokCoxw/kA2bDXilJXP0pHq0Yc9FozcV1x2rMvFw=",
         "owner": "alexd1971",
         "repo": "template-haskell-cross",
-        "rev": "cbe36c5d4610efb47c1f576e4c810459b6d5466b",
+        "rev": "8db816da7e24c44cc6899d73bf5c5b74710942d7",
         "type": "github"
       },
       "original": {
