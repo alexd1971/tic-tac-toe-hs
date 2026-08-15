@@ -39,14 +39,15 @@
           haskellPackages = import ./haskell-packages.nix;
           ffiLibraryName = "tic_tac_toe";
           flutterBridgeDir = "flutter-haskell-bridge";
-          ffiPackageFile = ./haskell-ffi/nix/generated/tic-tac-toe-ffi.nix;
+          ffiPackageDir = haskellPackages.ffiAdapterPackage.packageDir;
+          ffiPackageFile = haskellPackages.ffiAdapterPackage.packageFile;
           localPackages =
             {
               haskell-ffi-th = {
                 packageFile = haskell-ffi-th + /nix/generated/haskell-ffi-th.nix;
               };
             }
-            // haskellPackages.localHaskellPackages;
+            // haskellPackages.ffiDependencyPackages;
           androidBuilder =
             import (flutter-haskell-bridge + /nix/flutter-android-builder.nix) {
               bridgeLib = flutter-haskell-bridge.lib.${system};
@@ -67,9 +68,8 @@
         in
         import (flutter-haskell-bridge + /nix/flutter-artifacts.nix) {
           inherit pkgs androidBuilder nativeBuilder;
-          inherit (haskellPackages) localHaskellPackages;
-          inherit ffiLibraryName flutterBridgeDir ffiPackageFile;
-          packagesToRegenerate = haskellPackages.regeneratePackages;
+          inherit ffiLibraryName flutterBridgeDir ffiPackageDir ffiPackageFile;
+          inherit (haskellPackages) ffiDependencyPackages;
         };
     in
     {

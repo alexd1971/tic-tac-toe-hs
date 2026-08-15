@@ -6,11 +6,11 @@
         "th-cross": "th-cross"
       },
       "locked": {
-        "lastModified": 1786696739,
-        "narHash": "sha256-PvmFFVVbyY41ixHT3QhBvy9RooUiGYik9CS+Y+OZlS0=",
+        "lastModified": 1786775476,
+        "narHash": "sha256-wN8vNn4KyT8lMeMReomrDstAhQcW6bE2+ChJY6EH5sk=",
         "owner": "alexd1971",
         "repo": "flutter-haskell-bridge",
-        "rev": "f56a4cc6b12e3fded970a444ffc1d83116940a4f",
+        "rev": "38e0981a3193c13a20cd66bd3a737f8f16904bd9",
         "type": "github"
       },
       "original": {
