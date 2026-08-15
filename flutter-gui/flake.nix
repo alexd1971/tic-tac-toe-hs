@@ -6,7 +6,7 @@
     th-cross.follows = "flutter-haskell-bridge/th-cross";
     haskell-ffi-th.url = "github:alexd1971/haskell-ffi-th";
     haskell-ffi-th.inputs.nixpkgs.follows = "nixpkgs";
-    flutter-haskell-bridge.url = "github:alexd1971/flutter-haskell-bridge";
+    flutter-haskell-bridge.url = "path:/home/alexey/Projects/flutter-bridges/flutter-haskell-bridge";
   };
 
   outputs = { self, nixpkgs, th-cross, haskell-ffi-th, flutter-haskell-bridge, ... }:

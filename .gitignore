@@ -7,3 +7,7 @@ result-*
 *.dyn_o
 .dart_tool/
 .flutter-plugins-dependencies
+flutter-gui/flutter-haskell-bridge/android/app/
+flutter-gui/flutter-haskell-bridge/android/local.properties
+flutter-gui/flutter-haskell-bridge/linux/flutter/
+flutter-gui/flutter-haskell-bridge/macos/Flutter/

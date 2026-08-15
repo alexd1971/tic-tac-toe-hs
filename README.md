@@ -21,8 +21,8 @@ built and tested without Flutter, Android, or a browser.
 - `haskell-server`: HTTP API server using `servant` and `warp`.
 - `flutter-gui`: Flutter/Haskell integration layer.
   - `flutter-app`: the end-user Flutter application.
-  - `flutter-haskell-bridge`: local Flutter plugin package that contains the
-    generated Dart FFI API and bundled native libraries.
+  - `flutter-haskell-bridge`: local Flutter FFI package that contains the
+    generated Dart FFI API and bundled native assets.
   - `haskell-ffi`: Haskell FFI wrapper around `haskell-core`.
   - `haskell-packages.nix`: app-specific Haskell package wiring used by the
     bridge build.
@@ -118,11 +118,11 @@ nix run .#bundle-libs -- android
 nix run .#bundle-libs -- native
 ```
 
-The command updates the Flutter plugin package under
+The command updates the Flutter FFI package under
 `flutter-gui/flutter-haskell-bridge`:
 
-- `android/src/main/jniLibs/arm64-v8a`: Android JNI libraries;
-- `linux/lib`: Linux shared libraries;
+- `native_assets/android/arm64-v8a`: Android shared libraries;
+- `native_assets/linux`: Linux shared libraries;
 - `lib/bridge.dart`: generated Dart FFI bindings.
 
 The Dart API is generated once because Android and native builds export the
@@ -135,7 +135,7 @@ cd flutter-app
 flutter pub get
 ```
 
-The app depends on the local plugin package:
+The app depends on the local FFI package:
 
 ```yaml
 tic_tac_toe_bridge:
@@ -274,7 +274,7 @@ STATIC_DIR=/app/static
 - `flutter-gui` flake:
   - `nix develop`: enter the Flutter/Haskell development shell.
   - `nix run .#bundle-libs -- all`: build and copy native/Android FFI
-    artifacts into the Flutter plugin.
+    artifacts into the Flutter FFI package.
   - `nix run .#regen-haskell-nix`: regenerate app-specific Cabal-to-Nix files.
 
 ## External dependencies
