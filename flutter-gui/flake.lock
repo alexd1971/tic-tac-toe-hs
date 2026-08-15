@@ -6,14 +6,17 @@
         "th-cross": "th-cross"
       },
       "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-WM9EBpGLizinHY9kxOik58Ja+Hk/6eM+2E3iUqhPc9k=",
-        "path": "/home/alexey/Projects/flutter-bridges/flutter-haskell-bridge",
-        "type": "path"
+        "lastModified": 1786778775,
+        "narHash": "sha256-BbUOheU52Hjb03bPLOOF4PgamfFP4sgDubffex4u9Mo=",
+        "owner": "alexd1971",
+        "repo": "flutter-haskell-bridge",
+        "rev": "856164b7ea06ef464bc88ccce14470a19dc08b57",
+        "type": "github"
       },
       "original": {
-        "path": "/home/alexey/Projects/flutter-bridges/flutter-haskell-bridge",
-        "type": "path"
+        "owner": "alexd1971",
+        "repo": "flutter-haskell-bridge",
+        "type": "github"
       }
     },
     "haskell-ffi-th": {
